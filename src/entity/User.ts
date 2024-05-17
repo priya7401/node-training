@@ -28,4 +28,7 @@ export class User {
 
   @UpdateDateColumn()
   updated_at: Date;
+
+  @Column({ type: "timestamptz", nullable: true })
+  token_created_at: Date;
 }

@@ -9,7 +9,7 @@ export const AppDataSource = new DataSource({
   username: AppConstants.postgresUsername,
   password: AppConstants.postgresPassword,
   database: AppConstants.postgresDB,
-  // synchronize: true,   TODO: how to perform manual migration
+  // synchronize: true,
   logging: true,
   // should we add all models in entities and migrations list?
   entities: [User],

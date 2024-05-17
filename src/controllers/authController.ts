@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import * as userService from "../services/userService";
 import { messages } from "../config/messages";
 import { encryptString } from "../utils/bcryptHelper";
+import { HttpStatusCode } from "../utils/httpStatusCodes";
 
 export const signup = async (
   req: Request,
@@ -18,7 +19,9 @@ export const signup = async (
     const checkEmail = await userService.getUserByEmail(email);
 
     if (checkEmail || checkMobileNumber) {
-      return res.status(400).json({ "message": messages.userAlreadyExists });
+      return res
+        .status(HttpStatusCode.BAD_REQUEST)
+        .json({ "message": messages.userAlreadyExists });
     }
 
     // encrypt password
@@ -33,8 +36,10 @@ export const signup = async (
     );
 
     // TODO: how to remove password when sending the json
-    return res.status(201).json({ user: user });
+    return res.status(HttpStatusCode.CREATED).json({ user: user });
   } catch (error) {
-    return res.status(500).send(messages.internalServerError);
+    return res
+      .status(HttpStatusCode.INTERNAL_SERVER_ERROR)
+      .send(messages.internalServerError);
   }
 };
