@@ -23,14 +23,16 @@ export class User {
   @Column()
   password: string;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: "timestamptz", default: () => "CURRENT_TIMESTAMP" })
   created_at: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({
+    type: "timestamptz",
+    default: () => "CURRENT_TIMESTAMP",
+    onUpdate: "CURRENT_TIMESTAMP",
+  })
   updated_at: Date;
 
-  // should the timestamp be created with or without timestamp?
-  // created_at and updated_at are created without timestamp
   @Column({ type: "timestamptz", nullable: true })
   invalidate_token_before: Date;
 }

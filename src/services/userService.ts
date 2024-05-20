@@ -19,7 +19,7 @@ export const getUserByEmail = async (email: string) => {
 };
 
 export const getUserByMobileOrEmail = async (userDetails: UserInterface) => {
-  const user = await userRepository.find({
+  const user = await userRepository.findOne({
     where: [
       { mobile_number: userDetails.mobile_number },
       { email: userDetails.email },
