@@ -9,4 +9,13 @@ interface UserInterface {
   invalidate_token_before?: Date | null;
 }
 
-export { UserInterface };
+const userSelectColumns = [
+  "id",
+  "name",
+  "mobile_number",
+  "email",
+  "created_at",
+  "updated_at",
+];
+
+export { UserInterface, userSelectColumns };

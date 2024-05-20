@@ -11,8 +11,7 @@ export const signup = async (
   next: NextFunction
 ) => {
   try {
-    const { name, mobile_number, email } = req.body;
-    const inputPassword = req.body["password"];
+    const { name, mobile_number, email, password } = req.body;
 
     // check if user already exists in DB
     const existingUser = await userService.getUserByMobileOrEmail({
@@ -27,7 +26,7 @@ export const signup = async (
     }
 
     // encrypt password
-    const hash = await encryptString(inputPassword);
+    const hash = await encryptString(password);
 
     // create new user
     let user = await userService.createNewUser({
@@ -40,18 +39,13 @@ export const signup = async (
     const token = createToken(user.id);
     const time = new Date();
     time.setUTCSeconds(time.getUTCSeconds() + 600);
-    // const invalidateTokenBefore: string = time.toUTCString();
 
     // update invalidate_token_before column
     user = await userService.updateUser(user.id, {
       invalidate_token_before: time,
     });
 
-    const { password, invalidate_token_before, ...userDetails } = user;
-
-    return res
-      .status(HttpStatusCode.CREATED)
-      .json({ user: userDetails, token });
+    return res.status(HttpStatusCode.CREATED).json({ user, token });
   } catch (error) {
     console.log(error);
     return res
@@ -66,8 +60,7 @@ export const login = async (
   next: NextFunction
 ) => {
   try {
-    const { mobile_number, email } = req.body;
-    const inputPassword = req.body["password"];
+    const { mobile_number, email, password } = req.body;
 
     // check if user already exists in DB
     let existingUser = await userService.getUserByMobileOrEmail({
@@ -82,10 +75,7 @@ export const login = async (
     }
 
     // encrypt password
-    const checkPassword = await compareString(
-      inputPassword,
-      existingUser.password
-    );
+    const checkPassword = await compareString(password, existingUser.password);
 
     // check if encrypted password is same as stored password
     if (!checkPassword) {
@@ -97,18 +87,13 @@ export const login = async (
     const token = createToken(existingUser.id);
     const time = new Date();
     time.setUTCSeconds(time.getUTCSeconds() + 600);
-    // const invalidateTokenBefore: string = time.toUTCString();
 
     // update invalidate_token_before column
     existingUser = await userService.updateUser(existingUser.id, {
       invalidate_token_before: time,
     });
 
-    const { password, invalidate_token_before, ...userDetails } = existingUser;
-
-    return res
-      .status(HttpStatusCode.CREATED)
-      .json({ user: userDetails, token });
+    return res.status(HttpStatusCode.CREATED).json({ existingUser, token });
   } catch (error) {
     console.log(error);
     return res
