@@ -6,7 +6,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 
-@Entity()
+@Entity("users")
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
@@ -29,6 +29,8 @@ export class User {
   @UpdateDateColumn()
   updated_at: Date;
 
+  // should the timestamp be created with or without timestamp?
+  // created_at and updated_at are created without timestamp
   @Column({ type: "timestamptz", nullable: true })
-  token_created_at: Date;
+  invalidate_token_before: Date;
 }

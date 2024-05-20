@@ -1,6 +1,6 @@
 import express, { Express } from "express";
 import { connectDB } from "./database/dbConnection";
-import { AppConstants } from "./utils/appConstants";
+import { AppConstants } from "./config/appConstants";
 import bodyParser from "body-parser";
 import { router } from "./routes";
 

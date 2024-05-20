@@ -1,20 +1,19 @@
 import { DataSource } from "typeorm";
-import { User } from "../entity/User";
-import { AppConstants } from "../utils/appConstants";
+import { User } from "./entity/User";
+import { AppConstants } from "../config/appConstants";
 
 export const AppDataSource = new DataSource({
   type: "postgres",
-  host: "localhost",
-  port: 5432,
+  host: AppConstants.postgresHost,
+  port: AppConstants.postgresPort,
   username: AppConstants.postgresUsername,
   password: AppConstants.postgresPassword,
   database: AppConstants.postgresDB,
   // synchronize: true,
   logging: true,
-  // should we add all models in entities and migrations list?
   entities: [User],
   subscribers: [],
-  migrations: [User],
+  migrations: ["src/database/migrations/**/*.ts"],
 });
 
 export const connectDB = () =>

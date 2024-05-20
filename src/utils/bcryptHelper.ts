@@ -1,7 +1,6 @@
-import { AppConstants } from "./appConstants";
+import { AppConstants } from "../config/appConstants";
 import bcrypt from "bcrypt";
 
 export const encryptString = (text: string) => {
-  const hash = bcrypt.hash(text, AppConstants.saltRounds);
-  return hash;
+  return bcrypt.hash(text, AppConstants.saltRounds);
 };
