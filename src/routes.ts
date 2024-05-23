@@ -13,3 +13,9 @@ router.post(
   validator.body(authValidators.signupValidator),
   authController.signup
 );
+
+router.post(
+  "/auth/login",
+  validator.body(authValidators.loginValidator),
+  authController.login
+);
