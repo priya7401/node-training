@@ -9,10 +9,14 @@ const app: Express = express();
 //used when query is sent inside body
 app.use(bodyParser.json());
 //defining base url
-app.use("/api/v1", router);
+app.use(AppConstants.apiV1, router);
 
-connectDB();
+if (AppConstants.nodeEnv != "test") {
+  connectDB();
 
-app.listen(AppConstants.apiPort, () => {
-  console.log(`Example app listening on port ${AppConstants.apiPort}`);
-});
+  app.listen(AppConstants.apiPort, () => {
+    console.log(`Example app listening on port ${AppConstants.apiPort}`);
+  });
+}
+
+export default app;
