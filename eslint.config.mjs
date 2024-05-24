@@ -1,29 +1,25 @@
 // @ts-check
-
+import globals from 'globals';
 import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import prettierConfig from 'eslint-config-prettier';
-import globals from "globals";
+import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 
 export default tseslint.config(
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
   prettierConfig,
+  eslintPluginPrettierRecommended,
   {
     languageOptions: {
-      parserOptions: {
-        ecmaVersion: 2022,
-        sourceType: "module",
-        project: 'tsconfig.json',
-      },
+      ecmaVersion: 2022,
+      sourceType: "module",
       globals: {
-        ...globals.jest,
-        ...globals.node,
         ...globals.es2021,
-      }
+        ...globals.node
+      },
     },
-  },
-  {
+    ignores: ["src/**/entity/**", "migrations"],
     rules: {
       'no-var': 'error',
       semi: 'error',
@@ -33,9 +29,5 @@ export default tseslint.config(
       'no-multiple-empty-lines': 'error',
       'prefer-const': 'error',
       "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }]
-    }
-  },
-  {
-    ignores: ["src/**/*.model.ts", "migrations"]
-  }
+    },}
 );
