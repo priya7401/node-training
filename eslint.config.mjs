@@ -19,7 +19,7 @@ export default tseslint.config(
         ...globals.node
       },
     },
-    ignores: ["src/**/entity/**", "migrations"],
+    ignores: ["src/**/entity/**", "migrations", "src/database/migrations/", "src/database/entity/"],
     rules: {
       'no-var': 'error',
       semi: 'error',

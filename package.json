@@ -11,7 +11,7 @@
       "nodemon-dev": "nodemon src/index.ts",
       "migrate:generate": "npx typeorm-ts-node-commonjs migration:generate -d ./src/database/dbConnection.ts ./src/database/migrations/$migration_name",
       "migrate:run": "npx typeorm-ts-node-commonjs migration:run -d ./src/database/dbConnection.ts",
-      "lint": "npx eslint src/**/*.ts --fix --no-ignore"
+      "lint": "eslint src/**/*.ts --fix --no-ignore"
    },
    "author": "priya",
    "license": "ISC",
