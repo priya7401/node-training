@@ -1,0 +1,4 @@
+dist
+.eslint.config.mjs
+.prettierrc.js
+database/migrations

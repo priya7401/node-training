@@ -1,15 +1,11 @@
-import { NextFunction, Request, Response } from "express";
-import * as userService from "../services/userService";
-import { messages } from "../config/messages";
-import { compareString, encryptString } from "../utils/bcryptHelper";
-import { HttpStatusCode } from "../config/httpStatusCodes";
-import { createToken } from "../utils/jwtHelper";
+import { Request, Response } from 'express';
+import * as userService from '../services/userService';
+import { messages } from '../config/messages';
+import { compareString, encryptString } from '../utils/bcryptHelper';
+import { HttpStatusCode } from '../config/httpStatusCodes';
+import { createToken } from '../utils/jwtHelper';
 
-export const signup = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const signup = async (req: Request, res: Response) => {
   try {
     const { name, mobile_number, email, password } = req.body;
 
@@ -20,9 +16,7 @@ export const signup = async (
     });
 
     if (existingUser) {
-      return res
-        .status(HttpStatusCode.BAD_REQUEST)
-        .json({ "message": messages.userAlreadyExists });
+      return res.status(HttpStatusCode.BAD_REQUEST).json({ message: messages.userAlreadyExists });
     }
 
     // encrypt password
@@ -48,17 +42,11 @@ export const signup = async (
     return res.status(HttpStatusCode.CREATED).json({ user, token });
   } catch (error) {
     console.log(error);
-    return res
-      .status(HttpStatusCode.INTERNAL_SERVER_ERROR)
-      .send(messages.internalServerError);
+    return res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).send(messages.internalServerError);
   }
 };
 
-export const login = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const login = async (req: Request, res: Response) => {
   try {
     const { mobile_number, email, password } = req.body;
 
@@ -69,9 +57,7 @@ export const login = async (
     });
 
     if (!existingUser || !existingUser.id) {
-      return res
-        .status(HttpStatusCode.NOT_FOUND)
-        .json({ "message": messages.userNotFound });
+      return res.status(HttpStatusCode.NOT_FOUND).json({ message: messages.userNotFound });
     }
 
     // encrypt password
@@ -79,9 +65,7 @@ export const login = async (
 
     // check if encrypted password is same as stored password
     if (!checkPassword) {
-      return res
-        .status(HttpStatusCode.UNAUTHORIZED)
-        .json({ "message": messages.invalidPassword });
+      return res.status(HttpStatusCode.UNAUTHORIZED).json({ message: messages.invalidPassword });
     }
 
     const token = createToken(existingUser.id);
@@ -96,8 +80,6 @@ export const login = async (
     return res.status(HttpStatusCode.CREATED).json({ existingUser, token });
   } catch (error) {
     console.log(error);
-    return res
-      .status(HttpStatusCode.INTERNAL_SERVER_ERROR)
-      .send(messages.internalServerError);
+    return res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).send(messages.internalServerError);
   }
 };
