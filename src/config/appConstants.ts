@@ -12,3 +12,11 @@ export const AppConstants = {
   saltRounds: Number(process.env.SALT_ROUNDS),
   jwtTokenKey: process.env.JWT_TOKEN_KEY,
 };
+
+export enum ProjectStatus {
+  proposed = 'proposed',
+  planned = 'planned',
+  active = 'active',
+  completed = 'completed',
+  scrapped = 'scrapped',
+}

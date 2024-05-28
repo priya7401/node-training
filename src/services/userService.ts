@@ -4,9 +4,9 @@ import { UserInterface, userSelectColumns } from '../database/models/user';
 
 const userRepository = AppDataSource.getRepository(User);
 
-export const getUserByMobileOrEmail = async (userDetails: UserInterface) => {
+export const findUser = async (userDetails: UserInterface) => {
   const user = await userRepository.findOne({
-    where: [{ mobile_number: userDetails.mobile_number }, { email: userDetails.email }],
+    where: [{ mobile_number: userDetails.mobile_number }, { email: userDetails.email }, { id: userDetails.id }],
   });
   return user;
 };

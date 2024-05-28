@@ -10,7 +10,7 @@ export const signup = async (req: Request, res: Response) => {
     const { name, mobile_number, email, password } = req.body;
 
     // check if user already exists in DB
-    const existingUser = await userService.getUserByMobileOrEmail({
+    const existingUser = await userService.findUser({
       mobile_number,
       email,
     });
@@ -51,7 +51,7 @@ export const login = async (req: Request, res: Response) => {
     const { mobile_number, email, password } = req.body;
 
     // check if user already exists in DB
-    let existingUser = await userService.getUserByMobileOrEmail({
+    let existingUser = await userService.findUser({
       mobile_number,
       email,
     });
@@ -77,7 +77,7 @@ export const login = async (req: Request, res: Response) => {
       invalidate_token_before: time,
     });
 
-    return res.status(HttpStatusCode.CREATED).json({ existingUser, token });
+    return res.status(HttpStatusCode.CREATED).json({ user: existingUser, token });
   } catch (error) {
     console.log(error);
     return res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).send(messages.internalServerError);
