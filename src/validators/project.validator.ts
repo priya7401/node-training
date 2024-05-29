@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import { ProjectStatus } from '../config/appConstants';
+import { ProjectAttachmentType, ProjectStatus } from '../config/appConstants';
 
 export const getProjectsValidator = Joi.object({
   status: Joi.string()
@@ -27,6 +27,11 @@ export const updateProjectValidator = Joi.object({
   expensed_amount: Joi.number(),
   location: Joi.string(),
   scrapped_reason: Joi.string(),
+  attachment_id: Joi.number(),
+  attachment_type: Joi.string()
+    .optional()
+    .allow(null, '')
+    .valid(...Object.values(ProjectAttachmentType)),
 });
 
 export const deleteProjectValidator = Joi.object({

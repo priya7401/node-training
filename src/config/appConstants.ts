@@ -11,6 +11,10 @@ export const AppConstants = {
   postgresDB: process.env.POSTGRES_DATABASE,
   saltRounds: Number(process.env.SALT_ROUNDS),
   jwtTokenKey: process.env.JWT_TOKEN_KEY,
+  AWSaccessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  AWSsecretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  AWSregion: process.env.S3_REGION,
+  AWSbucket: process.env.S3_BUCKET,
 };
 
 export enum ProjectStatus {
@@ -19,4 +23,10 @@ export enum ProjectStatus {
   active = 'active',
   completed = 'completed',
   scrapped = 'scrapped',
+}
+
+export enum ProjectAttachmentType {
+  temple_images = 'temple_images',
+  project_documents = 'project_documents',
+  temple_main_image = 'temple_main_image',
 }

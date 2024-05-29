@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { ProjectStatus } from '../../config/appConstants';
+import { ProjectAttachment } from './ProjectAttachment';
 
 @Entity('projects')
 export class Project {
@@ -38,6 +39,9 @@ export class Project {
 
   @Column({ nullable: true })
   scrapped_reason: string;
+
+  @OneToMany(() => ProjectAttachment, (attachment) => attachment.project, { cascade: true })
+  project_attachments: ProjectAttachment[];
 
   @CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;

@@ -51,6 +51,8 @@ export const updateProject = async (req: Request, res: Response) => {
       expensed_amount,
       location,
       scrapped_reason,
+      attachment_id,
+      attachment_type,
     } = req.body;
 
     // temple name unique validator check
