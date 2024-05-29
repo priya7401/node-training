@@ -53,8 +53,6 @@ export const updateProject = async (req: Request, res: Response) => {
       scrapped_reason,
     } = req.body;
 
-    console.log('inside updateProject');
-
     // temple name unique validator check
     if (temple_name) {
       const existingProjects = await projectService.getProjects({ temple_name });
@@ -106,6 +104,24 @@ export const updateProject = async (req: Request, res: Response) => {
     }
 
     return res.status(HttpStatusCode.CREATED).json({ project: updatedProject });
+  } catch (error) {
+    console.log(error);
+    return res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).send(messages.internalServerError);
+  }
+};
+
+export const deleteProject = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.body;
+
+    // check if the project exists
+    const existingProject = await projectService.getProjectById(id);
+    if (!existingProject) {
+      return res.status(HttpStatusCode.NOT_FOUND).json({ message: messages.projectNotFound });
+    }
+
+    await projectService.deleteProject(id);
+    return res.status(HttpStatusCode.NO_CONTENT).send();
   } catch (error) {
     console.log(error);
     return res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).send(messages.internalServerError);

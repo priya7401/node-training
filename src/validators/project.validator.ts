@@ -28,3 +28,7 @@ export const updateProjectValidator = Joi.object({
   location: Joi.string(),
   scrapped_reason: Joi.string(),
 });
+
+export const deleteProjectValidator = Joi.object({
+  id: Joi.number().required(),
+});

@@ -21,3 +21,4 @@ router.use(verifyToken);
 router.get('/projects', validator.query(projectsValidator.getProjectsValidator), projectsController.getProjects);
 router.post('/projects', validator.body(projectsValidator.createProjectValidator), projectsController.createProject);
 router.put('/project', validator.body(projectsValidator.updateProjectValidator), projectsController.updateProject);
+router.delete('/project', validator.body(projectsValidator.deleteProjectValidator), projectsController.deleteProject);

@@ -10,7 +10,7 @@ export const getProjects = async (projectDetails: ProjectInterface) => {
 };
 
 export const getProjectsByStatus = async (status: ProjectStatus) => {
-  return await projectRepository.find({ where: { status: status } });
+  return await projectRepository.find({ where: { status } });
 };
 
 export const createProject = async (projectDetails: ProjectInterface) => {
@@ -19,11 +19,11 @@ export const createProject = async (projectDetails: ProjectInterface) => {
 };
 
 export const getProjectById = async (id: number) => {
-  return await projectRepository.findOne({ where: { id: id } });
+  return await projectRepository.findOne({ where: { id } });
 };
 
 export const updateProject = async (id: number, projectDetails: ProjectInterface) => {
-  const project = await projectRepository.findOneBy({ id: id });
+  const project = await projectRepository.findOneBy({ id });
   if (!project) {
     return {};
   }
@@ -33,4 +33,8 @@ export const updateProject = async (id: number, projectDetails: ProjectInterface
   }
   const updatedProject = await projectRepository.save(project);
   return updatedProject;
+};
+
+export const deleteProject = async (id: number) => {
+  return await projectRepository.delete({ id });
 };
