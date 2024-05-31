@@ -9,4 +9,5 @@ export const messages = {
   projectAlreadyExists: 'Project already exists',
   projectNotFound: 'Project not found',
   templeNameAlreadyExists: 'Temple name already exists',
+  attachmentNotFound: 'Attachment not found',
 };

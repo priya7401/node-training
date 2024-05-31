@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, JoinColumn } from 'typeorm';
 import { ProjectStatus } from '../../config/appConstants';
 import { ProjectAttachment } from './ProjectAttachment';
 
@@ -10,7 +10,7 @@ export class Project {
   @Column({ unique: true })
   reg_num: string;
 
-  @Column()
+  @Column({ unique: true })
   temple_name: string;
 
   @Column()
@@ -40,7 +40,8 @@ export class Project {
   @Column({ nullable: true })
   scrapped_reason: string;
 
-  @OneToMany(() => ProjectAttachment, (attachment) => attachment.project, { cascade: true })
+  @OneToMany(() => ProjectAttachment, (attachment) => attachment.project, { cascade: ['remove'] })
+  @JoinColumn()
   project_attachments: ProjectAttachment[];
 
   @CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })

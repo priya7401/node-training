@@ -1,5 +1,5 @@
 import { ProjectStatus } from '../../config/appConstants';
-import { ProjectAttachment } from '../entity/ProjectAttachment';
+import { ProjectAttachmentInterface } from './projectAttachment';
 
 interface ProjectInterface {
   id?: number;
@@ -17,7 +17,7 @@ interface ProjectInterface {
   progress?: number | null;
   created_at?: Date | null;
   updated_at?: Date | null;
-  project_attachments?: ProjectAttachment[] | null;
+  project_attachments?: ProjectAttachmentInterface[] | null;
 }
 
 export { ProjectInterface };

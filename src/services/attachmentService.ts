@@ -8,3 +8,7 @@ export const createAttachment = async (attachmentDetails: AttachmentInterface) =
   const attachment = attachmentRepository.create(attachmentDetails);
   return await attachmentRepository.save(attachment);
 };
+
+export const findAttachmentById = async (id: number) => {
+  return await attachmentRepository.findOneBy({ id });
+};

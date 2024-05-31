@@ -27,13 +27,25 @@ export const updateProjectValidator = Joi.object({
   expensed_amount: Joi.number(),
   location: Joi.string(),
   scrapped_reason: Joi.string(),
-  attachment_id: Joi.number(),
-  attachment_type: Joi.string()
-    .optional()
-    .allow(null, '')
-    .valid(...Object.values(ProjectAttachmentType)),
+  // attachment_id: Joi.number(),
+  // attachment_type: Joi.string()
+  //   .optional()
+  //   .allow(null, '')
+  //   .valid(...Object.values(ProjectAttachmentType)),
 });
 
 export const deleteProjectValidator = Joi.object({
   id: Joi.number().required(),
+});
+
+const attachmentDetailsSchema = Joi.object({
+  attachment_id: Joi.number().required(),
+  attachment_type: Joi.string()
+    .valid(...Object.values(ProjectAttachmentType))
+    .required(),
+});
+
+export const createProjectAttachmentValidator = Joi.object({
+  project_id: Joi.number().required(),
+  attachments: Joi.array().items(attachmentDetailsSchema).required(),
 });
