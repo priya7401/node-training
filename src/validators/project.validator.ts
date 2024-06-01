@@ -6,6 +6,7 @@ export const getProjectsValidator = Joi.object({
     .optional()
     .allow(null, '')
     .valid(...Object.values(ProjectStatus)),
+  keyword: Joi.string().optional().allow(null, ''),
 });
 
 export const createProjectValidator = Joi.object({
@@ -27,11 +28,6 @@ export const updateProjectValidator = Joi.object({
   expensed_amount: Joi.number(),
   location: Joi.string(),
   scrapped_reason: Joi.string(),
-  // attachment_id: Joi.number(),
-  // attachment_type: Joi.string()
-  //   .optional()
-  //   .allow(null, '')
-  //   .valid(...Object.values(ProjectAttachmentType)),
 });
 
 export const deleteProjectValidator = Joi.object({
@@ -48,4 +44,9 @@ const attachmentDetailsSchema = Joi.object({
 export const createProjectAttachmentValidator = Joi.object({
   project_id: Joi.number().required(),
   attachments: Joi.array().items(attachmentDetailsSchema).required(),
+});
+
+export const metaValidator = Joi.object({
+  per_page: Joi.number(),
+  page: Joi.number(),
 });

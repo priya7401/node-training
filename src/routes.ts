@@ -19,7 +19,12 @@ router.post('/auth/login', validator.body(authValidators.loginValidator), authCo
 router.use(verifyToken);
 
 // projects
-router.get('/projects', validator.query(projectsValidator.getProjectsValidator), projectsController.getProjects);
+router.get(
+  '/projects',
+  validator.query(projectsValidator.getProjectsValidator),
+  validator.body(projectsValidator.metaValidator),
+  projectsController.getProjects,
+);
 router.post('/project', validator.body(projectsValidator.createProjectValidator), projectsController.createProject);
 router.put('/project', validator.body(projectsValidator.updateProjectValidator), projectsController.updateProject);
 router.delete('/project', validator.body(projectsValidator.deleteProjectValidator), projectsController.deleteProject);

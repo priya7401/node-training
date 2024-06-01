@@ -6,14 +6,20 @@ import { randomUUID } from 'crypto';
 import { ProjectStatus } from '../config/appConstants';
 import { ProjectInterface } from '../database/models/project';
 import { ProjectAttachmentInterface } from '../database/models/projectAttachment';
-import { AttachmentDetails } from '../config/types';
+import { AttachmentDetails, Meta } from '../config/types';
 import { formatProjectDate } from '../utils/dateFormatHelper';
 import { getDownloadUrl } from '../utils/awsConfig';
 
 export const getProjects = async (req: Request, res: Response) => {
   try {
-    const { status } = req.query;
-    const projects: ProjectInterface[] = await projectService.getProjectsByStatus(status ? ProjectStatus[status.toString()] : null);
+    const { status, keyword } = req.query;
+    const metaData: Meta = req.body;
+
+    const { projects, meta }: { projects: ProjectInterface[]; meta: Meta } = await projectService.getProjects(
+      status ? ProjectStatus[status.toString()] : null,
+      metaData,
+      keyword ? keyword.toString() : '',
+    );
 
     for (const project of projects) {
       for (const projectAttachment of project.project_attachments) {
@@ -27,7 +33,7 @@ export const getProjects = async (req: Request, res: Response) => {
       }
     }
 
-    return res.status(HttpStatusCode.OK).json({ projects });
+    return res.status(HttpStatusCode.OK).json({ projects, meta });
   } catch (error) {
     console.log(error);
     return res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).send(messages.internalServerError);

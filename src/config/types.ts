@@ -5,4 +5,12 @@ interface AttachmentDetails {
   attachment_type?: ProjectAttachmentType | null;
 }
 
-export { AttachmentDetails };
+interface Meta {
+  total_pages?: number | null;
+  total_count?: number | null;
+  page?: number | null;
+  next_page?: number | null;
+  per_page?: number | null;
+}
+
+export { AttachmentDetails, Meta };

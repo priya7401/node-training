@@ -1,4 +1,6 @@
+import { FindManyOptions, Like } from 'typeorm';
 import { ProjectStatus } from '../config/appConstants';
+import { Meta } from '../config/types';
 import { AppDataSource } from '../database/dbConnection';
 import { Project } from '../database/entity/Project';
 import { ProjectAttachment } from '../database/entity/ProjectAttachment';
@@ -8,18 +10,34 @@ import { ProjectAttachmentInterface, projectAttachmentSelectColumns } from '../d
 const projectRepository = AppDataSource.getRepository(Project);
 const projectAttachmentRepository = AppDataSource.getRepository(ProjectAttachment);
 
-export const getProjects = async (projectDetails: ProjectInterface) => {
-  return await projectRepository.find({
-    relations: ['project_attachments', 'project_attachments.attachment'],
-    where: { temple_name: projectDetails.temple_name },
-  });
-};
+export const getProjects = async (status: ProjectStatus, meta: Meta, searchKeyword: string) => {
+  const whereCondition = [
+    { reg_num: Like(`%${searchKeyword}%`), status },
+    { temple_name: Like(`%${searchKeyword}%`), status },
+    { location: Like(`%${searchKeyword}%`), status },
+  ];
 
-export const getProjectsByStatus = async (status: ProjectStatus) => {
-  return await projectRepository.find({
+  const queryOptions: FindManyOptions = {
     relations: ['project_attachments', 'project_attachments.attachment'],
-    where: { status },
-  });
+    where: whereCondition,
+  };
+
+  if (meta.page && meta.per_page) {
+    queryOptions.skip = (meta.page - 1) * meta.per_page;
+    queryOptions.take = meta.per_page;
+  }
+
+  const [projects, total] = await projectRepository.findAndCount(queryOptions);
+
+  meta.total_pages = Math.ceil(total / (meta.per_page ?? 1));
+  meta.total_count = total;
+  if (meta.page < meta.total_pages) {
+    meta.next_page = meta.page + 1;
+  } else {
+    meta.next_page = null;
+  }
+  meta.per_page = undefined;
+  return { projects, meta };
 };
 
 export const createProject = async (projectDetails: ProjectInterface) => {
@@ -58,12 +76,4 @@ export const updateProjectAttachments = async (attachments: ProjectAttachmentInt
     .returning(projectAttachmentSelectColumns)
     .execute();
   return projectAttachments.generatedMaps;
-};
-
-export const getProjectAttachments = async (project_id: number) => {
-  return await projectAttachmentRepository.find({
-    where: { project: { id: project_id } },
-    relations: ['project', 'attachment'],
-    select: { project: { id: true }, attachment: { id: true } },
-  });
 };
