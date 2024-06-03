@@ -1,4 +1,4 @@
-import { FindManyOptions, Like } from 'typeorm';
+import { FindManyOptions, In, Like } from 'typeorm';
 import { ProjectStatus } from '../config/appConstants';
 import { Meta } from '../config/types';
 import { AppDataSource } from '../database/dbConnection';
@@ -66,7 +66,7 @@ export const deleteProject = async (id: number) => {
   return await projectRepository.delete({ id });
 };
 
-export const updateProjectAttachments = async (attachments: ProjectAttachmentInterface[]) => {
+export const createProjectAttachment = async (attachments: ProjectAttachmentInterface[]) => {
   //TODO: how to get attachment object and project id
   const projectAttachments = await projectAttachmentRepository
     .createQueryBuilder()
@@ -76,4 +76,12 @@ export const updateProjectAttachments = async (attachments: ProjectAttachmentInt
     .returning(projectAttachmentSelectColumns)
     .execute();
   return projectAttachments.generatedMaps;
+};
+
+export const getProjectAttachments = async (ids: number[]) => {
+  return await projectAttachmentRepository.find({
+    where: { id: In(ids) },
+    relations: ['project', 'attachment'],
+    select: { project: { id: true } },
+  });
 };

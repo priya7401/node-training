@@ -18,10 +18,11 @@ const projectAttachmentSelectColumns = [
   'created_at',
   'updated_at',
   'attachmentId',
-  // 'attachment.id',
-  // 'attachment.s3_key',
-  // 'attachment.created_at',
-  // 'attachment.updated_at',
+  'project.id',
+  'attachment.id',
+  'attachment.s3_key',
+  'attachment.created_at',
+  'attachment.updated_at',
 ];
 
 export { ProjectAttachmentInterface, projectAttachmentSelectColumns };

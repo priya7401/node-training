@@ -150,7 +150,16 @@ export const createProjectAttachment = async (req: Request, res: Response) => {
       });
     });
 
-    const updatedProjectAttachments = await projectService.updateProjectAttachments(projectAttachments);
+    let updatedProjectAttachments = await projectService.createProjectAttachment(projectAttachments);
+
+    const idsList = updatedProjectAttachments.map((projectAttachment: ProjectAttachmentInterface) => projectAttachment.id);
+
+    updatedProjectAttachments = await projectService.getProjectAttachments(idsList);
+
+    for (let projectAttachment of updatedProjectAttachments) {
+      projectAttachment.attachment.s3_url = await getDownloadUrl(projectAttachment.attachment.s3_key);
+    }
+
     return res.status(HttpStatusCode.CREATED).json({ project_attachments: updatedProjectAttachments });
   } catch (error) {
     console.log(error);
