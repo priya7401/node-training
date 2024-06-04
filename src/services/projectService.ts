@@ -41,7 +41,7 @@ export const getProjects = async (status: ProjectStatus, meta: Meta, searchKeywo
 };
 
 export const createProject = async (projectDetails: ProjectInterface) => {
-  let project = projectRepository.create(projectDetails);
+  const project = projectRepository.create(projectDetails);
   return await projectRepository.save(project);
 };
 
@@ -55,7 +55,7 @@ export const updateProject = async (id: number, projectDetails: ProjectInterface
     return null;
   }
 
-  for (let key in projectDetails) {
+  for (const key in projectDetails) {
     if (key.toString() != 'id' && projectDetails[key]) project[key] = projectDetails[key];
   }
   const updatedProject = await projectRepository.save(project);

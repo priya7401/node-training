@@ -8,7 +8,7 @@ import { AttachmentInterface } from '../database/models/attachment';
 
 export const getPresignedUrl = async (req: Request, res: Response) => {
   try {
-    const { file_name, file_type } = req.body;
+    const { file_name } = req.body;
 
     //generate unique key for the attachment
     const key = `${Date.now()}-${randomUUID()}-${file_name}`;

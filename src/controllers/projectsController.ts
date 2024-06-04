@@ -26,7 +26,7 @@ export const getProjects = async (req: Request, res: Response) => {
         projectAttachment.attachment.s3_url = await getDownloadUrl(projectAttachment.attachment.s3_key);
       }
       if (project.status == ProjectStatus.active) {
-        let progress = Math.round((project.expensed_amount / project.estimated_amount) * 100);
+        const progress = Math.round((project.expensed_amount / project.estimated_amount) * 100);
         project.progress = progress;
       } else if (project.status == ProjectStatus.completed || (project.estimated_amount && project.estimated_amount == project.expensed_amount)) {
         project.progress = 100;
@@ -102,7 +102,7 @@ export const updateProject = async (req: Request, res: Response) => {
       projectAttachment.attachment.s3_url = await getDownloadUrl(projectAttachment.attachment.s3_key);
     }
     if (updatedProject.status == ProjectStatus.active) {
-      let progress = Math.round((updatedProject.expensed_amount / updatedProject.estimated_amount) * 100);
+      const progress = Math.round((updatedProject.expensed_amount / updatedProject.estimated_amount) * 100);
       updatedProject.progress = progress;
     } else if (
       updatedProject.status == ProjectStatus.completed ||
@@ -140,7 +140,7 @@ export const createProjectAttachment = async (req: Request, res: Response) => {
   try {
     const { project_id, attachments }: { project_id: number; attachments: AttachmentDetails[] } = req.body;
 
-    let projectAttachments: ProjectAttachmentInterface[] = [];
+    const projectAttachments: ProjectAttachmentInterface[] = [];
 
     attachments.forEach((attachment: AttachmentDetails) => {
       projectAttachments.push({
@@ -156,7 +156,7 @@ export const createProjectAttachment = async (req: Request, res: Response) => {
 
     updatedProjectAttachments = await projectService.getProjectAttachments(idsList);
 
-    for (let projectAttachment of updatedProjectAttachments) {
+    for (const projectAttachment of updatedProjectAttachments) {
       projectAttachment.attachment.s3_url = await getDownloadUrl(projectAttachment.attachment.s3_key);
     }
 

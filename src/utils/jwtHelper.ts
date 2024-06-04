@@ -34,10 +34,10 @@ export const verifyToken = async (req: Request, res: Response, next: NextFunctio
     //local variable, available only through the lifetime of the request
     req.app.locals.user_id = decoded.id;
 
-    let id = parseInt(decoded.user_id);
+    const id = parseInt(decoded.user_id);
 
     // check if user exists in db
-    let user = await userService.findUser({ id });
+    const user = await userService.findUser({ id });
 
     if (!user) {
       return res.status(HttpStatusCode.NOT_FOUND).json({ mesage: messages.userNotFound });
