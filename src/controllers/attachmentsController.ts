@@ -4,7 +4,7 @@ import { messages } from '../config/messages';
 import { randomUUID } from 'crypto';
 import { getDownloadUrl, getUploadUrl } from '../utils/awsConfig';
 import * as attachmentService from '../services/attachmentService';
-import { AttachmentInterface } from '../database/models/attachment';
+import { AttachmentInterface } from '../database/models';
 
 export const getPresignedUrl = async (req: Request, res: Response) => {
   try {

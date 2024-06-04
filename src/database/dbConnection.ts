@@ -1,9 +1,6 @@
 import { DataSource } from 'typeorm';
-import { User } from './entity/User';
 import { AppConstants } from '../config/appConstants';
-import { Project } from './entity/Project';
-import { ProjectAttachment } from './entity/ProjectAttachment';
-import { Attachment } from './entity/Attachment';
+import { Attachment, Project, ProjectAttachment, User } from './entity';
 
 export const AppDataSource = new DataSource({
   type: 'postgres',

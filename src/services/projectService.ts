@@ -4,8 +4,7 @@ import { Meta } from '../config/types';
 import { AppDataSource } from '../database/dbConnection';
 import { Project } from '../database/entity/Project';
 import { ProjectAttachment } from '../database/entity/ProjectAttachment';
-import { ProjectInterface } from '../database/models/project';
-import { ProjectAttachmentInterface, projectAttachmentSelectColumns } from '../database/models/projectAttachment';
+import { ProjectAttachmentInterface, ProjectInterface, projectAttachmentSelectColumns } from '../database/models';
 
 const projectRepository = AppDataSource.getRepository(Project);
 const projectAttachmentRepository = AppDataSource.getRepository(ProjectAttachment);

@@ -1,5 +1,8 @@
 import dotenv from 'dotenv';
 
+const pathToEnv = `.env.${process.env.NODE_ENV}`;
+process.env.NODE_ENV ? dotenv.config({ path: pathToEnv }) : dotenv.config({ path: `.env` });
+
 dotenv.config();
 
 export const AppConstants = {
