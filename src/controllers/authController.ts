@@ -48,6 +48,7 @@ export const signup = async (req: Request, res: Response) => {
 
 export const login = async (req: Request, res: Response) => {
   try {
+    console.log('////// inside login controller');
     const { mobile_number, email, password } = req.body;
 
     // check if user already exists in DB

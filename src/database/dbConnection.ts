@@ -9,8 +9,9 @@ export const AppDataSource = new DataSource({
   username: AppConstants.postgresUsername,
   password: AppConstants.postgresPassword,
   database: AppConstants.postgresDB,
-  // synchronize: true,
-  logging: true,
+  synchronize: AppConstants.nodeEnv == 'test' ? true : false,
+  logging: AppConstants.nodeEnv == 'test' ? false : true,
+  dropSchema: AppConstants.nodeEnv == 'test' ? true : false,
   entities: [User, Project, Attachment, ProjectAttachment],
   subscribers: [],
   migrations: ['src/database/migrations/**/*.ts'],
@@ -19,6 +20,7 @@ export const AppDataSource = new DataSource({
 export const connectDB = () =>
   AppDataSource.initialize()
     .then(() => {
+      console.log('======= initialized postgres DB and running on port: ', AppConstants.postgresPort);
       // here you can start to work with your database
     })
-    .catch((error) => console.log(error));
+    .catch((error) => console.log('======= error initializing postgres DB on port: ', error));

@@ -6,6 +6,7 @@ process.env.NODE_ENV ? dotenv.config({ path: pathToEnv }) : dotenv.config({ path
 dotenv.config();
 
 export const AppConstants = {
+  nodeEnv: process.env.NODE_ENV,
   apiPort: Number(process.env.PORT),
   postgresHost: process.env.POSTGRES_HOST,
   postgresPort: Number(process.env.POSTGRES_PORT),
