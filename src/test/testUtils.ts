@@ -4,23 +4,23 @@ import bodyParser from 'body-parser';
 import { router } from '../routes';
 
 export const createTestConnection = async () => {
-  if (AppDataSource.isInitialized) {
-    await AppDataSource.dropDatabase();
-    await AppDataSource.synchronize();
+  if (!AppDataSource.isInitialized) {
     await AppDataSource.initialize();
-  } else {
-    await AppDataSource.initialize();
-    await AppDataSource.dropDatabase();
-    await AppDataSource.synchronize();
+    await AppDataSource.synchronize(true);
   }
 };
 
 export const closeTestConnection = async () => {
-  await AppDataSource.destroy();
+  if (AppDataSource.isInitialized) {
+    await AppDataSource.dropDatabase();
+    await AppDataSource.destroy();
+  }
 };
 
 export const resetTestDatabase = async () => {
-  await AppDataSource.synchronize(true);
+  if (AppDataSource.isInitialized) {
+    await AppDataSource.synchronize(true);
+  }
 };
 
 export const createServer = async () => {

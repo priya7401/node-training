@@ -15,6 +15,8 @@ export const signup = async (req: Request, res: Response) => {
       email,
     });
 
+    console.log(' ====== existingUser: ', existingUser);
+
     if (existingUser) {
       return res.status(HttpStatusCode.BAD_REQUEST).json({ message: messages.userAlreadyExists });
     }
@@ -48,7 +50,6 @@ export const signup = async (req: Request, res: Response) => {
 
 export const login = async (req: Request, res: Response) => {
   try {
-    console.log('////// inside login controller');
     const { mobile_number, email, password } = req.body;
 
     // check if user already exists in DB

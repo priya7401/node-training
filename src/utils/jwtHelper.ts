@@ -17,7 +17,6 @@ interface CustomJwtPayload extends jwt.JwtPayload {
 
 export const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    console.log(' ====== inside verify token');
     let token = req.headers.authorization ?? '';
     token = token.split(' ')[1]; //remove "Bearer" string from token
     if (!token) {
