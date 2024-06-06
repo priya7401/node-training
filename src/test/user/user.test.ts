@@ -1,4 +1,4 @@
-import { closeTestConnection, createServer, createTestConnection, resetTestDatabase } from '../testUtils';
+import { closeTestConnection, createServer, createTestConnection } from '../testUtils';
 import request from 'supertest';
 import { Server } from 'http';
 import { AppConstants } from '../../config/appConstants';
@@ -19,10 +19,6 @@ beforeAll(async () => {
 afterAll(async () => {
   server.close();
   await closeTestConnection();
-});
-
-beforeEach(async () => {
-  await resetTestDatabase();
 });
 
 describe('user signup', () => {
@@ -128,26 +124,39 @@ describe('user login', () => {
     expect(response.body).toMatchObject({ message: messages.userNotFound });
   }, 20000);
 
-  // it('should validate for the correct password', async () => {
-  //   let requestBody = {
-  //     mobile_number: '9888888881',
-  //     password: 'Password@123',
-  //     confirm_password: 'Password@123',
-  //     email: 'test1@gmail.com',
-  //   };
+  it('should throw error for incorrect password', async () => {
+    let requestBody = {
+      mobile_number: '9888888881',
+      password: 'Password@12',
+    };
 
-  //   let url: string = BASE_URL + '/auth/login';
-  //   // Make a request using Supertest
-  //   let response = await request(server).post(url).send(requestBody);
+    let url: string = BASE_URL + '/auth/login';
+    // Make a request using Supertest
+    let response = await request(server).post(url).send(requestBody);
 
-  //   // Assertions
-  //   expect(response.status).toBe(201);
-  //   expect(response.body).toHaveProperty('user');
-  //   expect(response.body.user).not.toBeNull();
-  //   expect(response.body.id).not.toBeNull();
-  //   expect(response.body).toHaveProperty('user.mobile_number', '9888888883');
-  //   expect(response.body).toHaveProperty('user.email', 'test3@gmail.com');
-  //   expect(response.body).toHaveProperty('token');
-  //   expect(response.body.token).not.toBeNull();
-  // }, 20000);
+    // Assertions
+    expect(response.status).toBe(401);
+    expect(response.body).toMatchObject({ message: messages.invalidPassword });
+  }, 20000);
+
+  it('should validate for the correct password', async () => {
+    let requestBody = {
+      email: 'test1@gmail.com',
+      password: 'Password@123',
+    };
+
+    let url: string = BASE_URL + '/auth/login';
+    // Make a request using Supertest
+    let response = await request(server).post(url).send(requestBody);
+
+    // Assertions
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveProperty('user');
+    expect(response.body.user).not.toBeNull();
+    expect(response.body.id).not.toBeNull();
+    expect(response.body).toHaveProperty('user.mobile_number', '9888888881');
+    expect(response.body).toHaveProperty('user.email', 'test1@gmail.com');
+    expect(response.body).toHaveProperty('token');
+    expect(response.body.token).not.toBeNull();
+  }, 20000);
 });

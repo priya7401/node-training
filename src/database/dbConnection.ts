@@ -11,7 +11,6 @@ export const AppDataSource = new DataSource({
   database: AppConstants.postgresDB,
   synchronize: AppConstants.nodeEnv == 'test' ? true : false,
   logging: AppConstants.nodeEnv == 'test' ? false : true,
-  dropSchema: AppConstants.nodeEnv == 'test' ? true : false,
   entities: [User, Project, Attachment, ProjectAttachment],
   subscribers: [],
   migrations: ['src/database/migrations/**/*.ts'],

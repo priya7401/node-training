@@ -15,8 +15,6 @@ export const signup = async (req: Request, res: Response) => {
       email,
     });
 
-    console.log(' ====== existingUser: ', existingUser);
-
     if (existingUser) {
       return res.status(HttpStatusCode.BAD_REQUEST).json({ message: messages.userAlreadyExists });
     }
