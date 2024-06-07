@@ -1,17 +1,11 @@
 import { AppDataSource } from '../../database/dbConnection';
-import { Attachment, Project, ProjectAttachment, User } from '../../database/entity';
+import { User } from '../../database/entity';
 import { encryptString } from '../../utils/bcryptHelper';
 
 export const seedUserData = async () => {
   await AppDataSource.initialize();
   await AppDataSource.synchronize(true);
   const entityManager = AppDataSource.manager;
-
-  // Clear existing data
-  await entityManager.delete(ProjectAttachment, {});
-  await entityManager.delete(Attachment, {});
-  await entityManager.delete(Project, {});
-  await entityManager.delete(User, {});
 
   // Insert seed data
   const user1 = new User();
@@ -28,5 +22,5 @@ export const seedUserData = async () => {
   user2.password = await encryptString('Password@123');
   await entityManager.save(user2);
 
-  await AppDataSource.destroy();
+  // await AppDataSource.destroy();
 };
