@@ -7,13 +7,12 @@ export const createTestConnection = async () => {
   if (!AppDataSource.isInitialized) {
     await AppDataSource.initialize();
   }
+  await AppDataSource.synchronize(true);
 };
 
 export const closeTestConnection = async () => {
-  if (AppDataSource.isInitialized) {
-    await AppDataSource.dropDatabase();
-    await AppDataSource.destroy();
-  }
+  await AppDataSource.dropDatabase();
+  await AppDataSource.destroy();
 };
 
 export const createServer = async () => {

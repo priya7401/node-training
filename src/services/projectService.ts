@@ -66,7 +66,6 @@ export const deleteProject = async (id: number) => {
 };
 
 export const createProjectAttachment = async (attachments: ProjectAttachmentInterface[]) => {
-  //TODO: how to get attachment object and project id
   const projectAttachments = await projectAttachmentRepository
     .createQueryBuilder()
     .insert()

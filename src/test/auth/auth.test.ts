@@ -1,24 +1,16 @@
-import { closeTestConnection, createServer, createTestConnection } from '../testUtils';
+import { createServer } from '../testUtils';
 import request from 'supertest';
-import { Server } from 'http';
-import { AppConstants } from '../../config/appConstants';
 import { messages } from '../../config/messages';
 import { seedUserData } from './seed';
+import { Express } from 'express';
 
 const BASE_URL = '/api/v1';
 
-let server: Server;
+let app: Express;
 
 beforeAll(async () => {
   await seedUserData();
-  await createTestConnection();
-  const app = await createServer();
-  server = app.listen(AppConstants.apiPort);
-});
-
-afterAll(async () => {
-  server.close();
-  await closeTestConnection();
+  app = await createServer();
 });
 
 describe('user signup', () => {
@@ -27,7 +19,7 @@ describe('user signup', () => {
 
     let requestBody = {};
 
-    let response = await request(server).post(url).send(requestBody);
+    let response = await request(app).post(url).send(requestBody);
     expect(response.status).toBe(400);
     expect(response.text).toBe('Error validating request body. "mobile_number" is required. "email" is required. "password" is required.');
 
@@ -36,7 +28,7 @@ describe('user signup', () => {
       password: 'ghk',
     };
 
-    response = await request(server).post(url).send(requestBody);
+    response = await request(app).post(url).send(requestBody);
     expect(response.status).toBe(400);
     expect(response.text).toBe(
       'Error validating request body. "mobile_number" with value "98888" fails to match the required pattern: /^(\\+91|\\+91\\-|0)?[789]\\d{9}$/. "email" is required. "password" length must be at least 8 characters long. "password" missing required peer "confirm_password".',
@@ -53,7 +45,7 @@ describe('user signup', () => {
 
     let url: string = BASE_URL + '/auth/signup';
     // Make a request using Supertest
-    let response = await request(server).post(url).send(requestBody);
+    let response = await request(app).post(url).send(requestBody);
 
     // Assertions
     expect(response.status).toBe(400);
@@ -70,7 +62,7 @@ describe('user signup', () => {
 
     let url: string = BASE_URL + '/auth/signup';
     // Make a request using Supertest
-    let response = await request(server).post(url).send(requestBody);
+    let response = await request(app).post(url).send(requestBody);
 
     // Assertions
     expect(response.status).toBe(201);
@@ -91,7 +83,7 @@ describe('user login', () => {
     let requestBody = {};
 
     // Make a request using Supertest
-    let response = await request(server).post(url);
+    let response = await request(app).post(url);
     // Assertions
     expect(response.status).toBe(400);
     expect(response.text).toBe('Error validating request body. "password" is required. "value" must contain at least one of [mobile_number, email].');
@@ -101,7 +93,7 @@ describe('user login', () => {
       password: 'ghk',
     };
 
-    response = await request(server).post(url).send(requestBody);
+    response = await request(app).post(url).send(requestBody);
     expect(response.status).toBe(400);
     expect(response.text).toBe(
       'Error validating request body. "mobile_number" with value "98888" fails to match the required pattern: /^(\\+91|\\+91\\-|0)?[789]\\d{9}$/. "password" length must be at least 8 characters long.',
@@ -117,7 +109,7 @@ describe('user login', () => {
 
     let url: string = BASE_URL + '/auth/login';
     // Make a request using Supertest
-    let response = await request(server).post(url).send(requestBody);
+    let response = await request(app).post(url).send(requestBody);
 
     // Assertions
     expect(response.status).toBe(404);
@@ -132,14 +124,14 @@ describe('user login', () => {
 
     let url: string = BASE_URL + '/auth/login';
     // Make a request using Supertest
-    let response = await request(server).post(url).send(requestBody);
+    let response = await request(app).post(url).send(requestBody);
 
     // Assertions
     expect(response.status).toBe(401);
     expect(response.body).toMatchObject({ message: messages.invalidPassword });
   }, 20000);
 
-  it('should validate for the correct password', async () => {
+  it('should return user details along with jwt token', async () => {
     let requestBody = {
       email: 'test1@gmail.com',
       password: 'Password@123',
@@ -147,7 +139,7 @@ describe('user login', () => {
 
     let url: string = BASE_URL + '/auth/login';
     // Make a request using Supertest
-    let response = await request(server).post(url).send(requestBody);
+    let response = await request(app).post(url).send(requestBody);
 
     // Assertions
     expect(response.status).toBe(201);

@@ -94,11 +94,13 @@ export const updateProject = async (req: Request, res: Response) => {
     });
 
     if (!updatedProject) {
-      return res.status(HttpStatusCode.BAD_REQUEST).json({ message: messages.projectNotFound });
+      return res.status(HttpStatusCode.NOT_FOUND).json({ message: messages.projectNotFound });
     }
 
-    for (const projectAttachment of updatedProject.project_attachments) {
-      projectAttachment.attachment.s3_url = await getDownloadUrl(projectAttachment.attachment.s3_key);
+    if (updatedProject.project_attachments) {
+      for (const projectAttachment of updatedProject.project_attachments) {
+        projectAttachment.attachment.s3_url = await getDownloadUrl(projectAttachment.attachment.s3_key);
+      }
     }
     if (updatedProject.status == ProjectStatus.active) {
       const progress = Math.round((updatedProject.expensed_amount / updatedProject.estimated_amount) * 100);

@@ -4,7 +4,6 @@ import { encryptString } from '../../utils/bcryptHelper';
 
 export const seedUserData = async () => {
   await AppDataSource.initialize();
-  await AppDataSource.synchronize(true);
   const entityManager = AppDataSource.manager;
 
   // Insert seed data
@@ -21,6 +20,4 @@ export const seedUserData = async () => {
   user2.mobile_number = '9888888882';
   user2.password = await encryptString('Password@123');
   await entityManager.save(user2);
-
-  // await AppDataSource.destroy();
 };
