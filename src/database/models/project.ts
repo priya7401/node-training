@@ -20,4 +20,20 @@ interface ProjectInterface {
   project_attachments?: ProjectAttachmentInterface[] | null;
 }
 
-export { ProjectInterface };
+const projectSelectColumns = [
+  'id',
+  'reg_num',
+  'temple_name',
+  'temple_incharge_name',
+  'temple_incharge_number',
+  'start_date',
+  'end_date',
+  'estimated_amount',
+  'scrapped_reason',
+  'progress',
+  'created_at',
+  'updated_at',
+  'project_attachments',
+];
+
+export { ProjectInterface, projectSelectColumns };
