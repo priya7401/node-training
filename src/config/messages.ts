@@ -5,4 +5,9 @@ export const messages = {
   userAlreadyExists: 'User already exists, please login',
   userNotFound: 'User not found',
   invalidPassword: 'Invalid password',
+  unauthorizedRequest: 'Unauthorized request',
+  projectAlreadyExists: 'Project already exists',
+  projectNotFound: 'Project not found',
+  templeNameAlreadyExists: 'Temple name already exists',
+  attachmentNotFound: 'Attachment not found',
 };
