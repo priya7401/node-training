@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import * as userService from '../services/userService';
 import { messages } from '../config/messages';
-import { compareString, encryptString } from '../utils/bcryptHelper';
 import { HttpStatusCode } from '../config/httpStatusCodes';
 import { createToken } from '../utils/jwtHelper';
+import { compareString, encryptString } from '../utils/utils';
 
 export const signup = async (req: Request, res: Response) => {
   try {

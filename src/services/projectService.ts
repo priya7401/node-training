@@ -4,8 +4,9 @@ import { Meta } from '../config/types';
 import { AppDataSource } from '../database/dbConnection';
 import { Project } from '../database/entity/Project';
 import { ProjectAttachment } from '../database/entity/ProjectAttachment';
-import { ProjectInterface } from '../database/models/project';
+import { ProjectInterface, projectSelectColumns } from '../database/models/project';
 import { ProjectAttachmentInterface, projectAttachmentSelectColumns } from '../database/models/projectAttachment';
+import { getMetaData } from '../utils/utils';
 
 const projectRepository = AppDataSource.getRepository(Project);
 const projectAttachmentRepository = AppDataSource.getRepository(ProjectAttachment);
@@ -29,15 +30,8 @@ export const getProjects = async (status: ProjectStatus, meta: Meta, searchKeywo
 
   const [projects, total] = await projectRepository.findAndCount(queryOptions);
 
-  meta.total_pages = Math.ceil(total / (meta.per_page ?? 1));
-  meta.total_count = total;
-  if (meta.page < meta.total_pages) {
-    meta.next_page = meta.page + 1;
-  } else {
-    meta.next_page = null;
-  }
-  meta.per_page = undefined;
-  return { projects, meta };
+  const metaObject = getMetaData(meta, total);
+  return { projects, metaObject };
 };
 
 export const createProject = async (projectDetails: ProjectInterface) => {
@@ -46,20 +40,18 @@ export const createProject = async (projectDetails: ProjectInterface) => {
 };
 
 export const getProjectById = async (id: number) => {
-  return await projectRepository.findOne({ where: { id } });
+  return await projectRepository.findOne({ where: { id }, relations: ['project_attachments', 'project_attachments.attachment'] });
 };
 
 export const updateProject = async (id: number, projectDetails: ProjectInterface) => {
-  const project = await projectRepository.findOneBy({ id });
-  if (!project) {
-    return null;
-  }
-
-  for (const key in projectDetails) {
-    if (key.toString() != 'id' && projectDetails[key]) project[key] = projectDetails[key];
-  }
-  const updatedProject = await projectRepository.save(project);
-  return updatedProject;
+  const updatedProject = await AppDataSource.createQueryBuilder()
+    .update(Project)
+    .set(projectDetails)
+    .where('id = :id', { id: id })
+    .returning(projectSelectColumns)
+    .execute();
+  const project = updatedProject.raw[0];
+  return project;
 };
 
 export const deleteProject = async (id: number) => {
@@ -67,7 +59,6 @@ export const deleteProject = async (id: number) => {
 };
 
 export const createProjectAttachment = async (attachments: ProjectAttachmentInterface[]) => {
-  //TODO: how to get attachment object and project id
   const projectAttachments = await projectAttachmentRepository
     .createQueryBuilder()
     .insert()

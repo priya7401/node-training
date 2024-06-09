@@ -7,24 +7,20 @@ import { ProjectStatus } from '../config/appConstants';
 import { ProjectInterface } from '../database/models/project';
 import { ProjectAttachmentInterface } from '../database/models/projectAttachment';
 import { AttachmentDetails, Meta } from '../config/types';
-import { formatProjectDate } from '../utils/dateFormatHelper';
-import { getDownloadUrl } from '../utils/awsConfig';
+import { formatProjectDate } from '../utils/utils';
 
 export const getProjects = async (req: Request, res: Response) => {
   try {
     const { status, keyword } = req.query;
     const metaData: Meta = req.body;
 
-    const { projects, meta }: { projects: ProjectInterface[]; meta: Meta } = await projectService.getProjects(
+    const { projects, metaObject }: { projects: ProjectInterface[]; metaObject: Meta } = await projectService.getProjects(
       status ? ProjectStatus[status.toString()] : null,
       metaData,
       keyword ? keyword.toString() : '',
     );
 
     for (const project of projects) {
-      for (const projectAttachment of project.project_attachments) {
-        projectAttachment.attachment.s3_url = await getDownloadUrl(projectAttachment.attachment.s3_key);
-      }
       if (project.status == ProjectStatus.active) {
         const progress = Math.round((project.expensed_amount / project.estimated_amount) * 100);
         project.progress = progress;
@@ -33,7 +29,7 @@ export const getProjects = async (req: Request, res: Response) => {
       }
     }
 
-    return res.status(HttpStatusCode.OK).json({ projects, meta });
+    return res.status(HttpStatusCode.OK).json({ projects, meta: metaObject });
   } catch (error) {
     console.log(error);
     return res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).send(messages.internalServerError);
@@ -98,9 +94,9 @@ export const updateProject = async (req: Request, res: Response) => {
       return res.status(HttpStatusCode.BAD_REQUEST).json({ message: messages.projectNotFound });
     }
 
-    for (const projectAttachment of updatedProject.project_attachments) {
-      projectAttachment.attachment.s3_url = await getDownloadUrl(projectAttachment.attachment.s3_key);
-    }
+    // to get project attachments
+    updatedProject = await projectService.getProjectById(id);
+
     if (updatedProject.status == ProjectStatus.active) {
       const progress = Math.round((updatedProject.expensed_amount / updatedProject.estimated_amount) * 100);
       updatedProject.progress = progress;
@@ -155,10 +151,6 @@ export const createProjectAttachment = async (req: Request, res: Response) => {
     const idsList = updatedProjectAttachments.map((projectAttachment: ProjectAttachmentInterface) => projectAttachment.id);
 
     updatedProjectAttachments = await projectService.getProjectAttachments(idsList);
-
-    for (const projectAttachment of updatedProjectAttachments) {
-      projectAttachment.attachment.s3_url = await getDownloadUrl(projectAttachment.attachment.s3_key);
-    }
 
     return res.status(HttpStatusCode.CREATED).json({ project_attachments: updatedProjectAttachments });
   } catch (error) {

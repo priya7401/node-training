@@ -2,9 +2,8 @@ import { Request, Response } from 'express';
 import { HttpStatusCode } from '../config/httpStatusCodes';
 import { messages } from '../config/messages';
 import { randomUUID } from 'crypto';
-import { getDownloadUrl, getUploadUrl } from '../utils/awsConfig';
+import { getUploadUrl } from '../utils/awsConfig';
 import * as attachmentService from '../services/attachmentService';
-import { AttachmentInterface } from '../database/models/attachment';
 
 export const getPresignedUrl = async (req: Request, res: Response) => {
   try {
@@ -30,11 +29,8 @@ export const createAttachment = async (req: Request, res: Response) => {
     const { file_name, file_type, s3_key } = req.body;
 
     // create a new record in DB
-    const attachment: AttachmentInterface = await attachmentService.createAttachment({ file_name, file_type, s3_key });
+    const attachment = await attachmentService.createAttachment({ file_name, file_type, s3_key });
 
-    // get the presigned url
-    const presignedUrl = await getDownloadUrl(s3_key);
-    attachment.s3_url = presignedUrl;
     return res.status(HttpStatusCode.CREATED).json({ attachment });
   } catch (error) {
     console.log(error);
