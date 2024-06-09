@@ -1,7 +1,7 @@
 import { randomUUID } from 'crypto';
 import { AppDataSource } from '../../database/dbConnection';
 import { Project, User } from '../../database/entity';
-import { encryptString } from '../../utils/bcryptHelper';
+import { encryptString } from '../../utils/utils';
 
 export const seedProjectsData = async () => {
   await AppDataSource.initialize();

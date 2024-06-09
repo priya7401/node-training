@@ -1,6 +1,6 @@
 import { AppDataSource } from '../../database/dbConnection';
 import { User } from '../../database/entity';
-import { encryptString } from '../../utils/bcryptHelper';
+import { encryptString } from '../../utils/utils';
 
 export const seedUserData = async () => {
   await AppDataSource.initialize();
