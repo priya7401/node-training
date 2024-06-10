@@ -2,7 +2,7 @@ import { createServer } from '../testUtils';
 import request from 'supertest';
 import { Express } from 'express';
 import { seedAttachmentData } from './seed';
-import { getDownloadUrl, getUploadUrl } from '../../utils/awsConfig';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 const BASE_URL = '/api/v1';
 
@@ -41,9 +41,8 @@ beforeEach(async () => {
   console.log('jwt token: ', jwtToken);
 });
 
-jest.mock('../../utils/awsConfig', () => ({
-  getUploadUrl: jest.fn(),
-  getDownloadUrl: jest.fn(),
+jest.mock('@aws-sdk/s3-request-presigner', () => ({
+  getSignedUrl: jest.fn(),
 }));
 
 describe('create new attachments', () => {
@@ -70,12 +69,12 @@ describe('create new attachments', () => {
 
     const expectedUrl = 'https://hello_world_test/s3_upload';
 
-    (getUploadUrl as jest.Mock).mockResolvedValue(expectedUrl);
+    (getSignedUrl as jest.Mock).mockResolvedValue(expectedUrl);
 
     let response = await request(app).post(url).set('Authorization', `Bearer ${jwtToken}`).send(requestBody);
 
     expect(response.status).toBe(201);
-    expect(getUploadUrl).toHaveBeenCalled();
+    expect(getSignedUrl).toHaveBeenCalled();
     expect(response.body).toHaveProperty('s3_url', expectedUrl);
     expect(response.body).toHaveProperty('s3_key');
     expect(response.body.s3_key).not.toBeNull();
@@ -103,7 +102,7 @@ describe('create new attachments', () => {
 
     let expectedUrl = 'https://hello_world_test/s3_upload';
 
-    (getUploadUrl as jest.Mock).mockResolvedValue(expectedUrl);
+    (getSignedUrl as jest.Mock).mockResolvedValue(expectedUrl);
 
     let response = await request(app).post(url).set('Authorization', `Bearer ${jwtToken}`).send(getPresignedUrlRequestBody);
 
@@ -118,12 +117,12 @@ describe('create new attachments', () => {
 
     expectedUrl = 'https://hello_world_test/s3_download';
 
-    (getDownloadUrl as jest.Mock).mockResolvedValue(expectedUrl);
+    (getSignedUrl as jest.Mock).mockResolvedValue(expectedUrl);
 
     response = await request(app).put(url).set('Authorization', `Bearer ${jwtToken}`).send(createAttachmentRequestBody);
 
     expect(response.status).toBe(201);
-    expect(getDownloadUrl).toHaveBeenCalled();
+    expect(getSignedUrl).toHaveBeenCalled();
     expect(response.body).toHaveProperty('attachment');
     expect(response.body.attachment).not.toBeNull();
     expect(response.body).toHaveProperty('attachment.id');
@@ -131,5 +130,70 @@ describe('create new attachments', () => {
     expect(response.body).toHaveProperty('attachment.s3_url', expectedUrl);
     expect(response.body).toHaveProperty('attachment.s3_key');
     expect(response.body.s3_key).not.toBeNull();
+  }, 20000);
+});
+
+describe('create new project attachment', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should throw error for invalid payload', async () => {
+    let url: string = BASE_URL + '/project/attachment';
+
+    let requestBody = {
+      id: 1,
+    };
+
+    let response = await request(app).post(url).set('Authorization', `Bearer ${jwtToken}`).send(requestBody);
+
+    expect(response.status).toBe(400);
+    expect(response.text).toBe('Error validating request body. "project_id" is required. "attachments" is required. "id" is not allowed.');
+  }, 20000);
+
+  it('should create project attachment', async () => {
+    let url: string = BASE_URL + '/project/attachment';
+
+    let requestBody = {
+      project_id: 1,
+      attachments: [
+        {
+          attachment_id: 1,
+          attachment_type: 'project_documents',
+        },
+        {
+          attachment_id: 2,
+          attachment_type: 'temple_images',
+        },
+      ],
+    };
+
+    const expectedUrl = 'https://hello_world_test/s3_download';
+
+    (getSignedUrl as jest.Mock).mockResolvedValue(expectedUrl);
+
+    let response = await request(app).post(url).set('Authorization', `Bearer ${jwtToken}`).send(requestBody);
+
+    console.log(response.body);
+
+    expect(response.status).toBe(201);
+    expect(getSignedUrl).toHaveBeenCalled();
+    expect(response.body).toHaveProperty('project_attachments');
+    expect(response.body.project_attachments).not.toBeNull();
+    expect(response.body.project_attachments).toHaveLength(2);
+    expect(response.body.project_attachments[0]).toHaveProperty('project_attachment_type', 'temple_images');
+    expect(response.body.project_attachments[0]).toHaveProperty('project.id', 1);
+    expect(response.body.project_attachments[0]).toHaveProperty(
+      'attachment.s3_key',
+      '1716996234209-8f99ac93-20c3-4ac2-93c5-e9a1d4123368-test_file_2.pdf',
+    );
+    expect(response.body.project_attachments[0]).toHaveProperty('attachment.s3_url', expectedUrl);
+    expect(response.body.project_attachments[1]).toHaveProperty('project_attachment_type', 'project_documents');
+    expect(response.body.project_attachments[1]).toHaveProperty('project.id', 1);
+    expect(response.body.project_attachments[1]).toHaveProperty(
+      'attachment.s3_key',
+      '1716995190939-de0e90bb-6e6c-4600-96ce-b93b04ae2ecd-test_file_1.pdf',
+    );
+    expect(response.body.project_attachments[1]).toHaveProperty('attachment.s3_url', expectedUrl);
   }, 20000);
 });
