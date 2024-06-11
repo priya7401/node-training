@@ -1,6 +1,6 @@
 import { AppDataSource } from '../database/dbConnection';
 import { User } from '../database/entity/User';
-import { UserInterface, userSelectColumns } from '../database/models/user';
+import { UserInterface, userSelectColumns } from '../database/models';
 
 const userRepository = AppDataSource.getRepository(User);
 

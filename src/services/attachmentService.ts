@@ -1,6 +1,6 @@
 import { AppDataSource } from '../database/dbConnection';
 import { Attachment } from '../database/entity/Attachment';
-import { AttachmentInterface } from '../database/models/attachment';
+import { AttachmentInterface } from '../database/models';
 
 const attachmentRepository = AppDataSource.getRepository(Attachment);
 

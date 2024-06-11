@@ -4,10 +4,9 @@ import { messages } from '../config/messages';
 import * as projectService from '../services/projectService';
 import { randomUUID } from 'crypto';
 import { ProjectStatus } from '../config/appConstants';
-import { ProjectInterface } from '../database/models/project';
-import { ProjectAttachmentInterface } from '../database/models/projectAttachment';
 import { AttachmentDetails, Meta } from '../config/types';
 import { formatProjectDate } from '../utils/utils';
+import { ProjectAttachmentInterface, ProjectInterface } from '../database/models';
 
 export const getProjects = async (req: Request, res: Response) => {
   try {
@@ -91,7 +90,7 @@ export const updateProject = async (req: Request, res: Response) => {
     });
 
     if (!updatedProject) {
-      return res.status(HttpStatusCode.BAD_REQUEST).json({ message: messages.projectNotFound });
+      return res.status(HttpStatusCode.NOT_FOUND).json({ message: messages.projectNotFound });
     }
 
     // to get project attachments

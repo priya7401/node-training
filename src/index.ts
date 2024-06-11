@@ -16,3 +16,5 @@ connectDB();
 app.listen(AppConstants.apiPort, () => {
   console.log(`Example app listening on port ${AppConstants.apiPort}`);
 });
+
+export { app };
