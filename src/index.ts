@@ -3,6 +3,7 @@ import { connectDB } from './database/dbConnection';
 import { AppConstants } from './config/appConstants';
 import bodyParser from 'body-parser';
 import { router } from './routes';
+import { errorHanlder } from './utils/errorHandler';
 
 const app: Express = express();
 
@@ -16,5 +17,7 @@ connectDB();
 app.listen(AppConstants.apiPort, () => {
   console.log(`Example app listening on port ${AppConstants.apiPort}`);
 });
+
+app.use(errorHanlder);
 
 export { app };

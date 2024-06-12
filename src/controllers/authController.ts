@@ -1,11 +1,11 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import * as userService from '../services/userService';
 import { messages } from '../config/messages';
 import { HttpStatusCode } from '../config/httpStatusCodes';
 import { createToken } from '../utils/jwtHelper';
 import { compareString, encryptString } from '../utils/utils';
 
-export const signup = async (req: Request, res: Response) => {
+export const signup = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { name, mobile_number, email, password } = req.body;
 
@@ -41,12 +41,11 @@ export const signup = async (req: Request, res: Response) => {
 
     return res.status(HttpStatusCode.CREATED).json({ user, token });
   } catch (error) {
-    console.log(error);
-    return res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).send(messages.internalServerError);
+    next(error);
   }
 };
 
-export const login = async (req: Request, res: Response) => {
+export const login = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { mobile_number, email, password } = req.body;
 
@@ -79,7 +78,6 @@ export const login = async (req: Request, res: Response) => {
 
     return res.status(HttpStatusCode.CREATED).json({ user: existingUser, token });
   } catch (error) {
-    console.log(error);
-    return res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).send(messages.internalServerError);
+    next(error);
   }
 };

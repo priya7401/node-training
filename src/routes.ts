@@ -10,7 +10,7 @@ import * as attachmentsValidator from './validators/attachment.validator';
 
 export const router: Router = express.Router();
 
-const validator = createValidator();
+const validator = createValidator({ passError: true });
 
 // auth
 router.post('/auth/signup', validator.body(authValidators.signupValidator), authController.signup);

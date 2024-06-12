@@ -1,11 +1,10 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { HttpStatusCode } from '../config/httpStatusCodes';
-import { messages } from '../config/messages';
 import { randomUUID } from 'crypto';
 import { getUploadUrl } from '../utils/awsConfig';
 import * as attachmentService from '../services/attachmentService';
 
-export const getPresignedUrl = async (req: Request, res: Response) => {
+export const getPresignedUrl = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { file_name } = req.body;
 
@@ -19,12 +18,11 @@ export const getPresignedUrl = async (req: Request, res: Response) => {
       s3_key: key,
     });
   } catch (error) {
-    console.log(error);
-    return res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).send(messages.internalServerError);
+    next(error);
   }
 };
 
-export const createAttachment = async (req: Request, res: Response) => {
+export const createAttachment = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { file_name, file_type, s3_key } = req.body;
 
@@ -33,7 +31,6 @@ export const createAttachment = async (req: Request, res: Response) => {
 
     return res.status(HttpStatusCode.CREATED).json({ attachment });
   } catch (error) {
-    console.log(error);
-    return res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).send(messages.internalServerError);
+    next(error);
   }
 };
