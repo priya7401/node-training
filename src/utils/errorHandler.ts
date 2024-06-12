@@ -40,7 +40,7 @@ export const errorHanlder = async (error: any, req: Request, res: Response, next
         statusCode = HttpStatusCode.INTERNAL_SERVER_ERROR;
     }
 
-    return res.status(statusCode).json({ message: errorMessage });
+    return res.status(statusCode).json({ type: 'Postgresql error', message: errorMessage });
   }
 
   return res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).send(messages.internalServerError);
