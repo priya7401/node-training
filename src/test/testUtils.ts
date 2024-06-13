@@ -2,6 +2,7 @@ import { AppDataSource } from '../database/dbConnection';
 import express, { Express } from 'express';
 import bodyParser from 'body-parser';
 import { router } from '../routes';
+import { errorHanlder } from '../utils/errorHandler';
 
 export const createTestConnection = async () => {
   if (!AppDataSource.isInitialized) {
@@ -19,6 +20,7 @@ export const createServer = async () => {
   const app: Express = express();
   app.use(bodyParser.json());
   app.use('/api/v1', router);
+  app.use(errorHanlder);
 
   return app;
 };

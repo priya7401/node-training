@@ -31,4 +31,12 @@ export const seedAttachmentData = async () => {
   user1.mobile_number = '9888888886';
   user1.password = await encryptString('Password@123');
   await entityManager.save(user1);
+
+  const project1 = new Project();
+  project1.temple_name = 'temple 4';
+  project1.temple_incharge_name = 'temple incharge 4';
+  project1.temple_incharge_number = '9999999994';
+  project1.location = 'temple 4 location';
+  project1.reg_num = 'TEM' + randomUUID().slice(0, 6);
+  await entityManager.save(project1);
 };
