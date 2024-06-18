@@ -3,6 +3,7 @@ import request from 'supertest';
 import { Express } from 'express';
 import { seedAttachmentData } from './seed';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { AppDataSource } from '../../database/dbConnection';
 
 const BASE_URL = '/api/v1';
 
@@ -29,7 +30,7 @@ beforeAll(async () => {
 
 beforeEach(async () => {
   let requestBody = {
-    email: 'test5@gmail.com',
+    email: 'test6@gmail.com',
     password: 'Password@123',
   };
 
@@ -39,6 +40,10 @@ beforeEach(async () => {
 
   jwtToken = response.body.token;
   console.log('jwt token: ', jwtToken);
+});
+
+afterAll(async () => {
+  await AppDataSource.dropDatabase();
 });
 
 jest.mock('@aws-sdk/s3-request-presigner', () => ({
@@ -56,7 +61,7 @@ describe('create new attachments', () => {
     let response = await request(app).post(url).set('Authorization', `Bearer ${jwtToken}`);
 
     expect(response.status).toBe(400);
-    expect(response.text).toBe('Error validating request body. "file_name" is required. "file_type" is required.');
+    expect(response.body.message).toBe('file_name is required, file_type is required');
   }, 20000);
 
   it('should return s3_key and s3 presigned url for s3 bucket upload', async () => {
@@ -85,10 +90,10 @@ describe('create new attachments', () => {
 
     let response = await request(app).put(url).set('Authorization', `Bearer ${jwtToken}`);
 
-    console.log(response.text);
+    console.log(response.body.message);
 
     expect(response.status).toBe(400);
-    expect(response.text).toBe('Error validating request body. "file_name" is required. "file_type" is required. "s3_key" is required.');
+    expect(response.body.message).toBe('file_name is required, file_type is required, s3_key is required');
   }, 20000);
 
   it('should create new attachment and return the attachment object', async () => {
@@ -148,7 +153,7 @@ describe('create new project attachment', () => {
     let response = await request(app).post(url).set('Authorization', `Bearer ${jwtToken}`).send(requestBody);
 
     expect(response.status).toBe(400);
-    expect(response.text).toBe('Error validating request body. "project_id" is required. "attachments" is required. "id" is not allowed.');
+    expect(response.body.message).toBe('project_id is required, attachments is required, id is not allowed');
   }, 20000);
 
   it('should create project attachment', async () => {

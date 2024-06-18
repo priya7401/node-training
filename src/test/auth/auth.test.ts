@@ -3,6 +3,7 @@ import request from 'supertest';
 import { messages } from '../../config/messages';
 import { seedUserData } from './seed';
 import { Express } from 'express';
+import { AppDataSource } from '../../database/dbConnection';
 
 const BASE_URL = '/api/v1';
 
@@ -13,6 +14,10 @@ beforeAll(async () => {
   app = await createServer();
 });
 
+afterAll(async () => {
+  await AppDataSource.dropDatabase();
+});
+
 describe('user signup', () => {
   it('invalid payload should throw validation error', async () => {
     let url: string = BASE_URL + '/auth/signup';
@@ -21,7 +26,7 @@ describe('user signup', () => {
 
     let response = await request(app).post(url).send(requestBody);
     expect(response.status).toBe(400);
-    expect(response.text).toBe('Error validating request body. "mobile_number" is required. "email" is required. "password" is required.');
+    expect(response.body.message).toBe('mobile_number is required, email is required, password is required');
 
     requestBody = {
       mobile_number: '98888',
@@ -30,8 +35,9 @@ describe('user signup', () => {
 
     response = await request(app).post(url).send(requestBody);
     expect(response.status).toBe(400);
-    expect(response.text).toBe(
-      'Error validating request body. "mobile_number" with value "98888" fails to match the required pattern: /^(\\+91|\\+91\\-|0)?[789]\\d{9}$/. "email" is required. "password" length must be at least 8 characters long. "password" missing required peer "confirm_password".',
+    console.log(response.body);
+    expect(response.body.message).toBe(
+      'mobile_number with value 98888 fails to match the required pattern: /^(\\+91|\\+91\\-|0)?[789]\\d{9}$/, email is required, password length must be at least 8 characters long, password missing required peer confirm_password',
     );
   }, 20000);
 
@@ -86,7 +92,8 @@ describe('user login', () => {
     let response = await request(app).post(url);
     // Assertions
     expect(response.status).toBe(400);
-    expect(response.text).toBe('Error validating request body. "password" is required. "value" must contain at least one of [mobile_number, email].');
+    console.log(response.body);
+    expect(response.body.message).toBe('password is required, value must contain at least one of [mobile_number, email]');
 
     requestBody = {
       mobile_number: '98888',
@@ -95,8 +102,9 @@ describe('user login', () => {
 
     response = await request(app).post(url).send(requestBody);
     expect(response.status).toBe(400);
-    expect(response.text).toBe(
-      'Error validating request body. "mobile_number" with value "98888" fails to match the required pattern: /^(\\+91|\\+91\\-|0)?[789]\\d{9}$/. "password" length must be at least 8 characters long.',
+    console.log(response.body);
+    expect(response.body.message).toBe(
+      'mobile_number with value 98888 fails to match the required pattern: /^(\\+91|\\+91\\-|0)?[789]\\d{9}$/, password length must be at least 8 characters long',
     );
   }, 20000);
 

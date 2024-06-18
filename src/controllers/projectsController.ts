@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { HttpStatusCode } from '../config/httpStatusCodes';
 import { messages } from '../config/messages';
 import * as projectService from '../services/projectService';
@@ -8,7 +8,7 @@ import { AttachmentDetails, Meta } from '../config/types';
 import { formatProjectDate } from '../utils/utils';
 import { ProjectAttachmentInterface, ProjectInterface } from '../database/models';
 
-export const getProjects = async (req: Request, res: Response) => {
+export const getProjects = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { status, keyword } = req.query;
     const metaData: Meta = req.body;
@@ -30,12 +30,11 @@ export const getProjects = async (req: Request, res: Response) => {
 
     return res.status(HttpStatusCode.OK).json({ projects, meta: metaObject });
   } catch (error) {
-    console.log(error);
-    return res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).send(messages.internalServerError);
+    next(error);
   }
 };
 
-export const createProject = async (req: Request, res: Response) => {
+export const createProject = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { temple_name, temple_incharge_name, temple_incharge_number, location } = req.body;
 
@@ -44,12 +43,11 @@ export const createProject = async (req: Request, res: Response) => {
     const project = await projectService.createProject({ temple_name, temple_incharge_name, temple_incharge_number, location, reg_num });
     return res.status(HttpStatusCode.CREATED).json({ project });
   } catch (error) {
-    console.log(error);
-    return res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).send(messages.internalServerError);
+    next(error);
   }
 };
 
-export const updateProject = async (req: Request, res: Response) => {
+export const updateProject = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const {
       id,
@@ -108,12 +106,11 @@ export const updateProject = async (req: Request, res: Response) => {
 
     return res.status(HttpStatusCode.CREATED).json({ project: updatedProject });
   } catch (error) {
-    console.log(error);
-    return res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).send(messages.internalServerError);
+    next(error);
   }
 };
 
-export const deleteProject = async (req: Request, res: Response) => {
+export const deleteProject = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.body;
 
@@ -126,12 +123,11 @@ export const deleteProject = async (req: Request, res: Response) => {
     await projectService.deleteProject(id);
     return res.status(HttpStatusCode.NO_CONTENT).send();
   } catch (error) {
-    console.log(error);
-    return res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).send(messages.internalServerError);
+    next(error);
   }
 };
 
-export const createProjectAttachment = async (req: Request, res: Response) => {
+export const createProjectAttachment = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { project_id, attachments }: { project_id: number; attachments: AttachmentDetails[] } = req.body;
 
@@ -153,7 +149,6 @@ export const createProjectAttachment = async (req: Request, res: Response) => {
 
     return res.status(HttpStatusCode.CREATED).json({ project_attachments: updatedProjectAttachments });
   } catch (error) {
-    console.log(error);
-    return res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).send(messages.internalServerError);
+    next(error);
   }
 };

@@ -3,6 +3,7 @@ import request from 'supertest';
 import { seedProjectsData } from './seed';
 import { Express } from 'express';
 import { messages } from '../../config/messages';
+import { AppDataSource } from '../../database/dbConnection';
 
 const BASE_URL = '/api/v1';
 
@@ -39,6 +40,10 @@ beforeEach(async () => {
 
   jwtToken = response.body.token;
   console.log('jwt token: ', jwtToken);
+});
+
+afterAll(async () => {
+  await AppDataSource.dropDatabase();
 });
 
 describe('get projects', () => {
@@ -100,7 +105,8 @@ describe('create project', () => {
     let response = await request(app).post(url).set('Authorization', `Bearer ${jwtToken}`).send(requestBody);
 
     // TODO: change the test case assertions once error handling is implemented for postgres errors
-    expect(response.status).toBe(500);
+    expect(response.status).toBe(409);
+    expect(response.body.message).toBe('temple_name already exists in DB');
   }, 20000);
 
   it('should throw error for invalid payload', async () => {
@@ -115,8 +121,8 @@ describe('create project', () => {
     let response = await request(app).post(url).set('Authorization', `Bearer ${jwtToken}`).send(requestBody);
 
     expect(response.status).toBe(400);
-    expect(response.text).toBe(
-      'Error validating request body. "temple_incharge_number" with value "99999" fails to match the required pattern: /^(\\+91|\\+91\\-|0)?[789]\\d{9}$/. "location" is required.',
+    expect(response.body.message).toBe(
+      'temple_incharge_number with value 99999 fails to match the required pattern: /^(\\+91|\\+91\\-|0)?[789]\\d{9}$/, location is required',
     );
   }, 20000);
 
@@ -148,14 +154,14 @@ describe('update project', () => {
     let response = await request(app).put(url).set('Authorization', `Bearer ${jwtToken}`);
 
     expect(response.status).toBe(400);
-    expect(response.text).toBe('Error validating request body. "id" is required.');
+    expect(response.body.message).toBe('id is required');
   }, 20000);
 
   it('invalid project id should throw project not found error', async () => {
     let url: string = BASE_URL + '/project';
 
     let requestBody = {
-      id: 3,
+      id: 100,
     };
 
     let response = await request(app).put(url).set('Authorization', `Bearer ${jwtToken}`).send(requestBody);
@@ -196,14 +202,14 @@ describe('delete project', () => {
     let response = await request(app).delete(url).set('Authorization', `Bearer ${jwtToken}`);
 
     expect(response.status).toBe(400);
-    expect(response.text).toBe('Error validating request body. "id" is required.');
+    expect(response.body.message).toBe('id is required');
   }, 20000);
 
   it('invalid project id should throw project not found error', async () => {
     let url: string = BASE_URL + '/project';
 
     let requestBody = {
-      id: 3,
+      id: 100,
     };
 
     let response = await request(app).delete(url).set('Authorization', `Bearer ${jwtToken}`).send(requestBody);
