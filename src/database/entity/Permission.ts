@@ -12,7 +12,7 @@ export class Permission {
   module_name: ModuleType;
 
   @ManyToOne(() => Role, (role) => role.permissions)
-  @JoinColumn({ foreignKeyConstraintName: 'role_id' })
+  @JoinColumn({ name: 'role_id', foreignKeyConstraintName: 'role_id' })
   role: Role;
 
   @Column({ default: false })

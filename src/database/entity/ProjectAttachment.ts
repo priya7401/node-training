@@ -9,11 +9,11 @@ export class ProjectAttachment {
   id: number;
 
   @ManyToOne(() => Project, (project) => project.project_attachments)
-  @JoinColumn({ foreignKeyConstraintName: 'project_id' })
+  @JoinColumn({ name: 'project_id', foreignKeyConstraintName: 'project_id' })
   project: Project;
 
   @OneToOne(() => Attachment, { cascade: ['remove'] })
-  @JoinColumn({ foreignKeyConstraintName: 'attachment_id' })
+  @JoinColumn({ name: 'attachment_id', foreignKeyConstraintName: 'attachment_id' })
   attachment: Attachment;
 
   @Column({ type: 'enum', enum: ProjectAttachmentType })
