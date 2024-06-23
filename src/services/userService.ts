@@ -7,6 +7,7 @@ const userRepository = AppDataSource.getRepository(User);
 export const findUser = async (userDetails: UserInterface) => {
   const user = await userRepository.findOne({
     where: [{ mobile_number: userDetails.mobile_number }, { email: userDetails.email }, { id: userDetails.id }],
+    relations: ['role'],
   });
   return user;
 };
@@ -24,11 +25,5 @@ export const updateUser = async (id: number, userDetails: UserInterface) => {
     .returning(userSelectColumns)
     .execute();
 
-  const user = updatedUser.raw[0];
-
-  if (!user) {
-    throw 'User not found';
-  }
-
-  return user;
+  return updatedUser.raw[0];
 };

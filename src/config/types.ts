@@ -1,4 +1,4 @@
-import { ProjectAttachmentType } from './appConstants';
+import { CRUDOperation, ModuleType, ProjectAttachmentType, Role } from './appConstants';
 
 interface AttachmentDetails {
   attachment_id?: number;
@@ -13,4 +13,10 @@ interface Meta {
   per_page?: number | null;
 }
 
-export { AttachmentDetails, Meta };
+interface PermissionCheckParams {
+  role: Role;
+  module: ModuleType;
+  operation: CRUDOperation;
+}
+
+export { AttachmentDetails, Meta, PermissionCheckParams };

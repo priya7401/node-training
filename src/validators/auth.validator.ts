@@ -6,6 +6,7 @@ export const signupValidator = Joi.object({
   email: Joi.string().email().required(),
   password: Joi.string().required().min(8),
   confirm_password: Joi.ref('password'),
+  role_name: Joi.string(),
 }).with('password', 'confirm_password');
 
 export const loginValidator = Joi.object({

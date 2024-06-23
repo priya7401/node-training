@@ -34,3 +34,25 @@ export enum ProjectAttachmentType {
   project_documents = 'project_documents',
   temple_main_image = 'temple_main_image',
 }
+
+export enum ModuleType {
+  project = 'project',
+  donor = 'donor',
+  payment = 'payment',
+  role = 'role',
+  permission = 'permission',
+  attachment = 'attachment',
+  auth = 'auth',
+}
+
+export enum CRUDOperation {
+  create = 'create',
+  read = 'read',
+  update = 'update',
+  delete = 'delete',
+}
+
+export enum Role {
+  admin = 'admin',
+  donor = 'donor',
+}
