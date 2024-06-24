@@ -1,7 +1,7 @@
 import express, { Router } from 'express';
 import * as authController from './controllers/authController';
 import { createValidator } from 'express-joi-validation';
-import * as authValidators from './validators/auth.validator';
+import * as authValidator from './validators/auth.validator';
 import { verifyToken } from './middleware/jwt.middleware';
 import * as projectsController from './controllers/projectsController';
 import * as projectsValidator from './validators/project.validator';
@@ -13,16 +13,21 @@ import checkPermissions from './middleware/rbac.middleware';
 import { CRUDOperation, ModuleType, Role } from './config/appConstants';
 import * as permissionValidator from './validators/permission.validator';
 import * as permissionController from './controllers/permissionsController';
+import * as userController from './controllers/userController';
+import * as userValidator from './validators/user.validator';
 
 export const router: Router = express.Router();
 
 const validator = createValidator({ passError: true });
 
 // auth
-router.post('/auth/signup', validator.body(authValidators.signupValidator), authController.signup);
-router.post('/auth/login', validator.body(authValidators.loginValidator), authController.login);
+router.post('/auth/signup', validator.body(authValidator.signupValidator), authController.signup);
+router.post('/auth/login', validator.body(authValidator.loginValidator), authController.login);
 
 router.use(verifyToken);
+
+// user
+router.put('/user', validator.body(userValidator.updateUserValidator), userController.updateUser);
 
 // projects
 router.get(
