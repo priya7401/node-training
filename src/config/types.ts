@@ -14,7 +14,7 @@ interface Meta {
 }
 
 interface PermissionCheckParams {
-  role: Role;
+  allowedRoles: Role[];
   module: ModuleType;
   operation: CRUDOperation;
 }

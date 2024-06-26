@@ -32,47 +32,73 @@ router.put('/user', validator.body(userValidator.updateUserValidator), userContr
 // projects
 router.get(
   '/projects',
+  checkPermissions({ allowedRoles: [Role.admin, Role.accountant, Role.donor], module: ModuleType.project, operation: CRUDOperation.read }),
   validator.query(projectsValidator.getProjectsValidator),
   validator.body(projectsValidator.metaValidator),
   projectsController.getProjects,
 );
-router.post('/project', validator.body(projectsValidator.createProjectValidator), projectsController.createProject);
-router.put('/project', validator.body(projectsValidator.updateProjectValidator), projectsController.updateProject);
-router.delete('/project', validator.body(projectsValidator.deleteProjectValidator), projectsController.deleteProject);
-router.post('/project/attachment', validator.body(projectsValidator.createProjectAttachmentValidator), projectsController.createProjectAttachment);
+router.post(
+  '/project',
+  checkPermissions({ allowedRoles: [Role.admin], module: ModuleType.project, operation: CRUDOperation.create }),
+  validator.body(projectsValidator.createProjectValidator),
+  projectsController.createProject,
+);
+router.put(
+  '/project',
+  checkPermissions({ allowedRoles: [Role.admin], module: ModuleType.project, operation: CRUDOperation.update }),
+  validator.body(projectsValidator.updateProjectValidator),
+  projectsController.updateProject,
+);
+router.delete(
+  '/project',
+  checkPermissions({ allowedRoles: [Role.admin], module: ModuleType.project, operation: CRUDOperation.delete }),
+  validator.body(projectsValidator.deleteProjectValidator),
+  projectsController.deleteProject,
+);
+router.post(
+  '/project/attachment',
+  checkPermissions({ allowedRoles: [Role.admin, Role.accountant], module: ModuleType.project, operation: CRUDOperation.create }),
+  validator.body(projectsValidator.createProjectAttachmentValidator),
+  projectsController.createProjectAttachment,
+);
 
 // attachments
 router.post('/attachments/presigned_url', validator.body(attachmentsValidator.getPresignedUrlValidator), atachmentsController.getPresignedUrl);
-router.put('/attachments/create_attachment', validator.body(attachmentsValidator.createAttachmentValidator), atachmentsController.createAttachment);
+router.put(
+  '/attachments/create_attachment',
+  checkPermissions({ allowedRoles: [Role.admin, Role.accountant, Role.donor], module: ModuleType.attachment, operation: CRUDOperation.create }),
+  validator.body(attachmentsValidator.createAttachmentValidator),
+  atachmentsController.createAttachment,
+);
 
 // roles
 router.post(
   '/role',
-  checkPermissions({ role: Role.admin, module: ModuleType.role, operation: CRUDOperation.create }),
+  checkPermissions({ allowedRoles: [Role.admin], module: ModuleType.role, operation: CRUDOperation.create }),
   validator.body(rolesValidator.createRoleValidator),
   rolesController.createRole,
 );
 router.get(
   '/roles',
-  checkPermissions({ role: Role.admin, module: ModuleType.role, operation: CRUDOperation.read }),
+  checkPermissions({ allowedRoles: [Role.admin], module: ModuleType.role, operation: CRUDOperation.read }),
   validator.body(rolesValidator.getRolesValidator),
   rolesController.getRoles,
 );
 router.get(
   '/role',
-  checkPermissions({ role: Role.admin, module: ModuleType.role, operation: CRUDOperation.read }),
+  checkPermissions({ allowedRoles: [Role.admin], module: ModuleType.role, operation: CRUDOperation.read }),
   validator.body(rolesValidator.getRoleByIdOrNameValidator),
   rolesController.getRoleByIdOrName,
 );
 router.put(
   '/role',
-  checkPermissions({ role: Role.admin, module: ModuleType.role, operation: CRUDOperation.update }),
+  checkPermissions({ allowedRoles: [Role.admin], module: ModuleType.role, operation: CRUDOperation.update }),
   validator.body(rolesValidator.updateRoleValidator),
   rolesController.updateRole,
 );
 router.delete(
   '/role',
-  checkPermissions({ role: Role.admin, module: ModuleType.role, operation: CRUDOperation.delete }),
+  checkPermissions({ allowedRoles: [Role.admin], module: ModuleType.role, operation: CRUDOperation.delete }),
   validator.body(rolesValidator.deleteRoleValidator),
   rolesController.deleteRole,
 );
@@ -80,28 +106,28 @@ router.delete(
 // permissions
 router.post(
   '/permission',
-  checkPermissions({ role: Role.admin, module: ModuleType.permission, operation: CRUDOperation.create }),
+  checkPermissions({ allowedRoles: [Role.admin], module: ModuleType.permission, operation: CRUDOperation.create }),
   validator.body(permissionValidator.createPermissionValidator),
   permissionController.createPermission,
 );
 
 router.get(
   '/permission',
-  checkPermissions({ role: Role.admin, module: ModuleType.permission, operation: CRUDOperation.read }),
+  checkPermissions({ allowedRoles: [Role.admin], module: ModuleType.permission, operation: CRUDOperation.read }),
   validator.body(permissionValidator.getPermissionValidator),
   permissionController.getPermission,
 );
 
 router.put(
   '/permission',
-  checkPermissions({ role: Role.admin, module: ModuleType.permission, operation: CRUDOperation.update }),
+  checkPermissions({ allowedRoles: [Role.admin], module: ModuleType.permission, operation: CRUDOperation.update }),
   validator.body(permissionValidator.updatePermissionValidator),
   permissionController.updatePermission,
 );
 
 router.delete(
   '/permission',
-  checkPermissions({ role: Role.admin, module: ModuleType.permission, operation: CRUDOperation.delete }),
+  checkPermissions({ allowedRoles: [Role.admin], module: ModuleType.permission, operation: CRUDOperation.delete }),
   validator.body(permissionValidator.deletePermissionValidator),
   permissionController.deletePermission,
 );

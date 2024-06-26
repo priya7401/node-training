@@ -3,30 +3,29 @@ import * as roleService from '../services/roleService';
 import { CRUDOperation, Role } from '../config/appConstants';
 import { HttpStatusCode } from '../config/httpStatusCodes';
 import { messages } from '../config/messages';
-import * as permissionService from '../services/permissionService';
 import { PermissionCheckParams } from '../config/types';
 import { UserInterface } from '../database/models';
 
-const checkPermissions = ({ role, module, operation }: PermissionCheckParams) => {
+const checkPermissions = ({ allowedRoles, module, operation }: PermissionCheckParams) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       const user: UserInterface = req.app.locals.user;
       const userRole: Role = Role[user.role.role];
 
-      if (!userRole || userRole != role) {
+      if (!allowedRoles.includes(userRole)) {
         return res.status(HttpStatusCode.FORBIDDEN).json({ message: messages.accessDenied });
       }
 
-      const roleEntity = await roleService.getRoleByIdOrName({ roleName: role });
+      const roleEntity = await roleService.getRoleByIdOrName({ roleName: userRole });
 
       if (!roleEntity) {
         return res.status(HttpStatusCode.NOT_FOUND).json({ message: messages.roleNotFound });
       }
 
-      const permission = await permissionService.getPermission({ role: { id: roleEntity.id }, module_name: module });
+      const permission = roleEntity.permissions.find((permissionEntity) => permissionEntity.module_name === module);
 
       if (!permission) {
-        return res.status(HttpStatusCode.NOT_FOUND).json({ message: messages.permissionNotFound });
+        return res.status(HttpStatusCode.NOT_FOUND).json({ message: `${messages.permissionNotFound} for the role '${userRole}'` });
       }
 
       let hasPermission = false;

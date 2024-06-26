@@ -55,4 +55,5 @@ export enum CRUDOperation {
 export enum Role {
   admin = 'admin',
   donor = 'donor',
+  accountant = 'accountant',
 }
