@@ -3,7 +3,7 @@ import { connectDB } from './database/dbConnection';
 import { AppConstants } from './config/appConstants';
 import bodyParser from 'body-parser';
 import { router } from './routes';
-import { errorHanlder } from './utils/errorHandler';
+import { errorHanlder } from './middleware/errorHandler.middleware';
 
 const app: Express = express();
 

@@ -1,6 +1,5 @@
 import { DataSource } from 'typeorm';
 import { AppConstants } from '../config/appConstants';
-import { Attachment, Project, ProjectAttachment, User } from './entity';
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
@@ -11,7 +10,7 @@ export const AppDataSource = new DataSource({
   database: AppConstants.postgresDB,
   synchronize: AppConstants.nodeEnv == 'test' ? true : false,
   logging: AppConstants.nodeEnv == 'test' ? false : true,
-  entities: [User, Project, Attachment, ProjectAttachment],
+  entities: ['src/database/entity/**/*.ts'],
   subscribers: [],
   migrations: ['src/database/migrations/**/*.ts'],
 });

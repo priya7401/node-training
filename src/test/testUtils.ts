@@ -2,7 +2,7 @@ import { AppDataSource } from '../database/dbConnection';
 import express, { Express } from 'express';
 import bodyParser from 'body-parser';
 import { router } from '../routes';
-import { errorHanlder } from '../utils/errorHandler';
+import { errorHanlder } from '../middleware/errorHandler.middleware';
 
 export const createTestConnection = async () => {
   if (!AppDataSource.isInitialized) {

@@ -10,4 +10,7 @@ export const messages = {
   projectNotFound: 'Project not found',
   templeNameAlreadyExists: 'Temple name already exists',
   attachmentNotFound: 'Attachment not found',
+  roleNotFound: 'Role not found',
+  permissionNotFound: 'Permission not found',
+  accessDenied: 'Access Denied',
 };
